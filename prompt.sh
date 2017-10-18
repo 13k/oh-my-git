@@ -105,7 +105,8 @@ function omg_custom_build_prompt() {
 
   if [[ $is_a_git_repo == true ]]; then
     # on filesystem
-    prompt="${black_on_white} "
+    prompt="$(omg_eval_prompt_callback before)"
+    prompt+="${black_on_white} "
     prompt+=$(omg_enrich_append $is_a_git_repo $omg_is_a_git_repo_symbol "${black_on_white}")
     prompt+=$(omg_enrich_append $has_stashes $omg_has_stashes_symbol "${purple_on_white}")
 
@@ -158,12 +159,16 @@ function omg_custom_build_prompt() {
     fi
 
     prompt+=$(omg_enrich_append ${is_on_a_tag} "${omg_is_on_a_tag_symbol} ${tag_at_current_commit}" "${black_on_red}")
-    prompt+="${omg_last_symbol_color}${reset}\n"
-    prompt+="$(omg_eval_prompt_callback)"
+    prompt+="${omg_last_symbol_color}${reset}"
+    prompt+="$(omg_eval_prompt_callback after_first)"
+    prompt+="\n"
+    prompt+="$(omg_eval_prompt_callback before_second)"
     prompt+="${omg_second_line}"
+    prompt+="$(omg_eval_prompt_callback after)"
   else
-    prompt+="$(omg_eval_prompt_callback)"
+    prompt+="$(omg_eval_prompt_callback before)"
     prompt+="${omg_ungit_prompt}"
+    prompt+="$(omg_eval_prompt_callback after)"
   fi
 
   echo "${prompt}"

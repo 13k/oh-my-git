@@ -96,5 +96,7 @@ function omg_exists() {
 }
 
 function omg_eval_prompt_callback() {
-  omg_exists omg_prompt_callback && echo "$(omg_prompt_callback)"
+  local callback_name="omg_prompt_callback"
+  [[ -n "$1" ]] && callback_name+="_$1"
+  omg_exists "$callback_name" && $callback_name
 }
