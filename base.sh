@@ -31,7 +31,8 @@ function omg_current_action() {
 }
 
 function omg_build_prompt() {
-  local enabled=`git config --get oh-my-git.enabled`
+  local enabled="${OMG_PROMPT_ENABLED:=true}"
+  [[ -z "$enabled" ]] && enabled="$(git config --get oh-my-git.enabled 2> /dev/null)"
 
   if [[ ${enabled} == false ]]; then
     echo "${OMG_PS_ORIG}"
