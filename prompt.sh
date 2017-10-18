@@ -181,4 +181,4 @@ function omg_bash_prompt() {
 }
 
 export PS2="${yellow}→${reset} "
-export PROMPT_COMMAND="omg_bash_prompt; $OMG_PC_ORIG"
+export PROMPT_COMMAND="${OMG_PC_ORIG}${OMG_PC_ORIG:+"; "}omg_bash_prompt"
