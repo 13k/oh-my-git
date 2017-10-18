@@ -108,7 +108,7 @@ function omg_custom_build_prompt() {
     prompt="$(omg_eval_prompt_callback before)"
     prompt+="${black_on_white} "
     prompt+=$(omg_enrich_append $is_a_git_repo $omg_is_a_git_repo_symbol "${black_on_white}")
-    prompt+=$(omg_enrich_append $has_stashes $omg_has_stashes_symbol "${purple_on_white}")
+    prompt+=$(omg_enrich_append $has_stashes $omg_has_stashes_symbol "${red_on_white}")
 
     prompt+=$(omg_enrich_append $has_untracked_files $omg_has_untracked_files_symbol "${red_on_white}")
     prompt+=$(omg_enrich_append $has_modifications $omg_has_modifications_symbol "${red_on_white}")
