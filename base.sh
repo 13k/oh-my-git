@@ -35,7 +35,7 @@ function omg_build_prompt() {
   [[ -z "$enabled" ]] && enabled="$(git config --get oh-my-git.enabled 2> /dev/null)"
 
   if [[ ${enabled} == false ]]; then
-    echo "${OMG_PS_ORIG}"
+    echo "$PS1"
     exit
   fi
 
@@ -98,5 +98,5 @@ function omg_exists() {
 function omg_eval_prompt_callback() {
   local callback_name="omg_prompt_callback"
   [[ -n "$1" ]] && callback_name+="_$1"
-  omg_exists "$callback_name" && $callback_name
+  omg_exists "$callback_name" && "$callback_name"
 }

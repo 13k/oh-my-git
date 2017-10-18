@@ -1,13 +1,9 @@
 [[ -z "$BASH_VERSION" ]] && return 0
 
-OMG_PS_ORIG="$PS1"
 OMG_PC_ORIG="$PROMPT_COMMAND"
 OMG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source "${OMG_DIR}/base.sh"
-
-: ${omg_ungit_prompt:="$PS1"}
-: ${omg_second_line:="$PS1"}
 
 : ${omg_is_a_git_repo_symbol:=''}
 : ${omg_has_untracked_files_symbol:=''}        #                ?    
@@ -30,7 +26,7 @@ source "${OMG_DIR}/base.sh"
 
 : ${omg_default_color_on:='\[\033[1;37m\]'}
 : ${omg_default_color_off:='\[\033[0m\]'}
-: ${omg_last_symbol_color:='\e[0;31m\e[40m'}
+: ${omg_last_symbol_color:='\[\e[0;31m\e[40m\]'}
 
 function omg_enrich_append() {
   local flag=$1
@@ -105,7 +101,7 @@ function omg_custom_build_prompt() {
 
   if [[ $is_a_git_repo == true ]]; then
     # on filesystem
-    prompt="$(omg_eval_prompt_callback before)"
+    prompt="$(omg_eval_prompt_callback before_first)"
     prompt+="${black_on_white} "
     prompt+=$(omg_enrich_append $is_a_git_repo $omg_is_a_git_repo_symbol "${black_on_white}")
     prompt+=$(omg_enrich_append $has_stashes $omg_has_stashes_symbol "${red_on_white}")
@@ -159,16 +155,16 @@ function omg_custom_build_prompt() {
     fi
 
     prompt+=$(omg_enrich_append ${is_on_a_tag} "${omg_is_on_a_tag_symbol} ${tag_at_current_commit}" "${black_on_red}")
-    prompt+="${omg_last_symbol_color}${reset}"
     prompt+="$(omg_eval_prompt_callback after_first)"
+    prompt+="${omg_last_symbol_color}${reset}"
     prompt+="\n"
     prompt+="$(omg_eval_prompt_callback before_second)"
-    prompt+="${omg_second_line}"
-    prompt+="$(omg_eval_prompt_callback after)"
+    prompt+="${PS1}"
+    prompt+="$(omg_eval_prompt_callback after_second)"
   else
-    prompt+="$(omg_eval_prompt_callback before)"
-    prompt+="${omg_ungit_prompt}"
-    prompt+="$(omg_eval_prompt_callback after)"
+    prompt+="$(omg_eval_prompt_callback before_second)"
+    prompt+="${PS1}"
+    prompt+="$(omg_eval_prompt_callback after_second)"
   fi
 
   echo "${prompt}"
