@@ -5,6 +5,8 @@ OMG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source "${OMG_DIR}/base.sh"
 
+: ${omg_separator_symbol:=''}
+: ${omg_terminator_symbol:="$omg_separator_symbol"}
 : ${omg_is_a_git_repo_symbol:=''}
 : ${omg_has_untracked_files_symbol:=''}        #                ?    
 : ${omg_has_adds_symbol:=''}
@@ -26,7 +28,9 @@ source "${OMG_DIR}/base.sh"
 
 : ${omg_default_color_on:='\[\033[1;37m\]'}
 : ${omg_default_color_off:='\[\033[0m\]'}
-: ${omg_last_symbol_color:='\[\e[0;31m\e[40m\]'}
+: ${omg_terminator_color:='\[\e[0;31m\e[40m\]'}
+
+: ${omg_termination:="${omg_terminator_color}${omg_terminator_symbol}"}
 
 function omg_enrich_append() {
   local flag=$1
@@ -119,7 +123,7 @@ function omg_custom_build_prompt() {
     prompt+=$(omg_enrich_append $ready_to_commit $omg_ready_to_commit_symbol "${red_on_white}")
 
     # where
-    prompt="${prompt} ${white_on_red} ${black_on_red}"
+    prompt="${prompt} ${white_on_red}${omg_separator_symbol} ${black_on_red}"
 
     if [[ $detached == true ]]; then
       prompt+=$(omg_enrich_append $detached $omg_detached_symbol "${white_on_red}")
@@ -156,7 +160,7 @@ function omg_custom_build_prompt() {
 
     prompt+=$(omg_enrich_append ${is_on_a_tag} "${omg_is_on_a_tag_symbol} ${tag_at_current_commit}" "${black_on_red}")
     prompt+="$(omg_eval_prompt_callback after_first)"
-    prompt+="${omg_last_symbol_color}${reset}"
+    prompt+="${omg_termination}${reset}"
     prompt+="\n"
     prompt+="$(omg_eval_prompt_callback before_second)"
     prompt+="${PS1}"
