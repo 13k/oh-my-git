@@ -1,7 +1,9 @@
+#!/bin/bash
+
 [[ -z "$BASH_VERSION" ]] && return 0
 
 OMG_MARK="omg_prompt_mark"
-OMG_ESC_MARK="\\eX${OMG_MARK}\\e\\\\"
+OMG_ESC_MARK="\\e_${OMG_MARK}\\e\\\\"
 OMG_ORIGINAL_PS1="$PS1"
 
 # colors
@@ -299,14 +301,11 @@ function omg_build_prompt() {
     prompt+="$(omg_eval_prompt_callback after_first)"
     prompt+="${omg_termination}${omg_reset}"
     prompt+="\\n"
-    prompt+="$(omg_eval_prompt_callback before_second)"
-    prompt+="${prev_prompt}"
-    prompt+="$(omg_eval_prompt_callback after_second)"
-  else
-    prompt+="$(omg_eval_prompt_callback before_second)"
-    prompt+="${prev_prompt}"
-    prompt+="$(omg_eval_prompt_callback after_second)"
   fi
+
+  prompt+="$(omg_eval_prompt_callback before_second)"
+  prompt+="${prev_prompt}"
+  prompt+="$(omg_eval_prompt_callback after_second)"
 
   echo "$prompt"
 }
