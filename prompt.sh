@@ -8,30 +8,36 @@ readonly OMG_ESC_MARK="\\e_${OMG_MARK}\\e\\\\"
 readonly OMG_ORIGINAL_PS1="$PS1"
 
 # config
+: "${omg_ps2_symbol:="ﲵ"}"
 : "${omg_separator_symbol:=""}"
 : "${omg_terminator_symbol:="$omg_separator_symbol"}"
-: "${omg_is_a_git_repo_symbol:=""}"
-: "${omg_has_untracked_files_symbol:=""}"
-: "${omg_has_adds_symbol:=""}"
-: "${omg_has_deletions_symbol:=""}"
-: "${omg_has_cached_deletions_symbol:=""}"
-: "${omg_has_cached_modifications_symbol:=""}"
-: "${omg_has_modifications_symbol:=""}"
-: "${omg_ready_to_commit_symbol:=""}"
-: "${omg_is_on_a_tag_symbol:=""}"
+: "${omg_is_a_git_repo_symbol:="ﯙ"}"
+: "${omg_has_untracked_files_symbol:="﯑"}"
+: "${omg_has_adds_symbol:="樂"}"
+: "${omg_has_deletions_symbol:=""}"
+: "${omg_has_cached_modifications_symbol:="洛"}"
+: "${omg_has_cached_deletions_symbol:=""}"
+: "${omg_has_modifications_symbol:=""}"
+: "${omg_ready_to_commit_symbol:="ﰚ"}"
+: "${omg_is_on_a_tag_symbol:="笠"}"
 : "${omg_needs_to_merge_symbol:=""}"
 : "${omg_detached_symbol:=""}"
-: "${omg_can_fast_forward_symbol:=""}"
-: "${omg_has_diverged_symbol:=""}"
-: "${omg_not_tracked_branch_symbol:=""}"
-: "${omg_rebase_tracking_branch_symbol:=""}"
-: "${omg_merge_tracking_branch_symbol:=""}"
-: "${omg_should_push_symbol:=""}"
-: "${omg_has_stashes_symbol:=""}"
+: "${omg_can_fast_forward_symbol:=""}"
+: "${omg_has_diverged_symbol:="燎"}"
+: "${omg_not_tracked_branch_symbol:=""}"
+: "${omg_rebase_tracking_branch_symbol:="療"}"
+: "${omg_merge_tracking_branch_symbol:="שּׁ"}"
+: "${omg_should_push_symbol:=""}"
+: "${omg_has_stashes_symbol:=""}"
 
 : "${omg_primary_color:="red"}"
 : "${omg_secondary_color:="white"}"
 : "${omg_terminator_color:="red:default"}"
+: "${omg_ps2_color:="yellow:default"}"
+: "${omg_local_color_inactive:=""}"
+: "${omg_local_color_active:=""}"
+: "${omg_remote_color_inactive:=""}"
+: "${omg_remote_color_active:=""}"
 
 readonly -A omg_color_table_hl=(
   [reset]=0
@@ -65,12 +71,6 @@ readonly -A omg_color_table_bg=(
 )
 
 function omg_expand_color() {
-  if [[ "$1" == *'\e['* ]]; then
-    # assumes it's already expanded
-    echo -n "$1"
-    return 0
-  fi
-
   local -a color_names
   local -a color_codes
   local color_idx color_name color_code
@@ -78,6 +78,14 @@ function omg_expand_color() {
   readarray -d ':' -t color_names < <(echo -n "$1")
 
   for color_idx in "${!color_names[@]}"; do
+    color_name="${color_names[$color_idx]}"
+
+    if [[ "$color_name" == *";"* ]]; then
+      # assumes it's already expanded
+      color_codes=("${color_codes[@]}" "$color_name")
+      continue
+    fi
+
     if [[ $color_idx -eq 0 ]]; then
       local -n color_table="omg_color_table_fg"
     elif [[ $color_idx -eq 1 ]]; then
@@ -86,7 +94,6 @@ function omg_expand_color() {
       local -n color_table="omg_color_table_hl"
     fi
 
-    color_name="${color_names[$color_idx]}"
     color_code="${color_table[$color_name]}"
 
     if [[ -z "$color_code" && $color_idx -eq 0 ]]; then
@@ -108,14 +115,37 @@ function omg_expand_color() {
   echo -n "\\[\\e[${color_codes_join}m\\]"
 }
 
-omg_setpp_local_inactive="$(omg_expand_color "black:$omg_secondary_color")"
-omg_setpp_local_active="$(omg_expand_color "$omg_primary_color:$omg_secondary_color")"
-omg_setpp_remote_inactive="$(omg_expand_color "black:$omg_primary_color")"
-omg_setpp_remote_active="$(omg_expand_color "$omg_secondary_color:$omg_primary_color")"
+if [[ -n "$omg_local_color_inactive" ]]; then
+  omg_setpp_local_inactive="$(omg_expand_color "$omg_local_color_inactive")"
+else
+  omg_setpp_local_inactive="$(omg_expand_color "black:$omg_secondary_color")"
+fi
+
+if [[ -n "$omg_local_color_active" ]]; then
+  omg_setpp_local_active="$(omg_expand_color "$omg_local_color_active")"
+else
+  omg_setpp_local_active="$(omg_expand_color "$omg_primary_color:$omg_secondary_color")"
+fi
+
+if [[ -n "$omg_remote_color_inactive" ]]; then
+  omg_setpp_remote_inactive="$(omg_expand_color "$omg_remote_color_inactive")"
+else
+  omg_setpp_remote_inactive="$(omg_expand_color "black:$omg_primary_color")"
+fi
+
+if [[ -n "$omg_remote_color_active" ]]; then
+  omg_setpp_remote_active="$(omg_expand_color "$omg_remote_color_active")"
+else
+  omg_setpp_remote_active="$(omg_expand_color "$omg_secondary_color:$omg_primary_color")"
+fi
 
 omg_termination="$(omg_expand_color "$omg_terminator_color")"
 omg_termination+="${omg_terminator_symbol}"
 omg_termination+="$(omg_expand_color "reset")"
+
+omg_ps2="$(omg_expand_color "$omg_ps2_color")"
+omg_ps2+="${omg_ps2_symbol}"
+omg_ps2+="$(omg_expand_color "reset") "
 
 function omg_callback_defined() {
   declare -fF "$1" &> /dev/null
@@ -335,8 +365,9 @@ function omg_prompt_init() {
   [[ "$PROMPT_COMMAND" =~ omg_prompt_command ]] && return 0
 
   local prompt_cmd="$PROMPT_COMMAND"
-  export PS2="${omg_yellow}→${omg_reset} "
-  export PROMPT_COMMAND="${prompt_cmd}${prompt_cmd:+"; "}omg_prompt_command"
+
+  export PS2="$omg_ps2"
+  export PROMPT_COMMAND="${prompt_cmd}${prompt_cmd:+";"}omg_prompt_command"
 }
 
 omg_prompt_init
