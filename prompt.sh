@@ -35,32 +35,32 @@ omg_white_on_red="${omg_white}${omg_bg_red}"
 omg_yellow_on_red="${omg_yellow}${omg_bg_red}"
 
 # config
-: ${omg_separator_symbol:=''}
-: ${omg_terminator_symbol:="$omg_separator_symbol"}
-: ${omg_is_a_git_repo_symbol:=''}
-: ${omg_has_untracked_files_symbol:=''}        #                ?    
-: ${omg_has_adds_symbol:=''}
-: ${omg_has_deletions_symbol:=''}
-: ${omg_has_cached_deletions_symbol:=''}
-: ${omg_has_modifications_symbol:=''}
-: ${omg_has_cached_modifications_symbol:=''}
-: ${omg_ready_to_commit_symbol:=''}            #   →
-: ${omg_is_on_a_tag_symbol:=''}                #   
-: ${omg_needs_to_merge_symbol:='ᄉ'}
-: ${omg_detached_symbol:=''}
-: ${omg_can_fast_forward_symbol:=''}
-: ${omg_has_diverged_symbol:=''}               #   
-: ${omg_not_tracked_branch_symbol:=''}
-: ${omg_rebase_tracking_branch_symbol:=''}     #   
-: ${omg_merge_tracking_branch_symbol:=''}      #  
-: ${omg_should_push_symbol:=''}                #    
-: ${omg_has_stashes_symbol:=''}
+: "${omg_separator_symbol:=''}"
+: "${omg_terminator_symbol:="$omg_separator_symbol"}"
+: "${omg_is_a_git_repo_symbol:=''}"
+: "${omg_has_untracked_files_symbol:=''}"
+: "${omg_has_adds_symbol:=''}"
+: "${omg_has_deletions_symbol:=''}"
+: "${omg_has_cached_deletions_symbol:=''}"
+: "${omg_has_cached_modifications_symbol:=''}"
+: "${omg_has_modifications_symbol:=''}"
+: "${omg_ready_to_commit_symbol:=''}"
+: "${omg_is_on_a_tag_symbol:=''}"
+: "${omg_needs_to_merge_symbol:=''}"
+: "${omg_detached_symbol:=''}"
+: "${omg_can_fast_forward_symbol:=''}"
+: "${omg_has_diverged_symbol:=''}"
+: "${omg_not_tracked_branch_symbol:=''}"
+: "${omg_rebase_tracking_branch_symbol:=''}"
+: "${omg_merge_tracking_branch_symbol:=''}"
+: "${omg_should_push_symbol:=''}"
+: "${omg_has_stashes_symbol:=''}"
 
-: ${omg_default_color_on:="$omg_white_bold"}
-: ${omg_default_color_off:="$omg_reset"}
-: ${omg_terminator_color:="$omg_red_on_black"}
+: "${omg_default_color_on:="$omg_white_bold"}"
+: "${omg_default_color_off:="$omg_reset"}"
+: "${omg_terminator_color:="$omg_red_on_black"}"
 
-: ${omg_termination:="${omg_terminator_color}${omg_terminator_symbol}"}
+: "${omg_termination:="${omg_terminator_color}${omg_terminator_symbol}"}"
 
 function omg_callback_defined() {
   declare -fF "$1" &> /dev/null
