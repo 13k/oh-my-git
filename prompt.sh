@@ -3,8 +3,7 @@
 [[ -z "$BASH_VERSION" ]] && return 0
 
 readonly OMG_GIT_CONFIG_KEY="oh-my-git.enabled"
-readonly OMG_MARK="omg_prompt_mark"
-readonly OMG_ESC_MARK="\\e_${OMG_MARK}\\e\\\\"
+readonly OMG_MARK='\eX\e\\'
 readonly OMG_ORIGINAL_PS1="$PS1"
 
 # config
@@ -283,7 +282,7 @@ function omg_build_prompt() {
     return 0
   fi
 
-  local prompt="\\[$OMG_ESC_MARK\\]"
+  local prompt="\\[$OMG_MARK\\]"
 
   if [[ "${s[is_git_repo]}" == true ]]; then
 
